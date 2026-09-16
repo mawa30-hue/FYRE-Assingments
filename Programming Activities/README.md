@@ -14,6 +14,7 @@ Program6.py - Made Sept 16, Creates a system to turn a servo motor 180 degrees w
 
 Program7.py - Made Sept 16, Reads data from a moisture sensors and outputs data to a CSV file
 
+ENGR 095 Moisture Sensor Data Group 7.xlsx  - Made Sept 16, contains data from Program 7
 
 
 
