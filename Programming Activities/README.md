@@ -12,4 +12,8 @@ Program5.py - Made Sept 14, Creates a rudimentary security system with an Arduin
 
 Program6.py - Made Sept 16, Creates a system to turn a servo motor 180 degrees when a button is pressed
 
+Program7.py - Made Sept 16, Reads data from a moisture sensors and outputs data to a CSV file
+
+
+
 
