@@ -10,3 +10,6 @@ Program4.py - Made Sept 9, Makes the Green LED on the Arduino flash on and off i
 
 Program5.py - Made Sept 14, Creates a rudimentary security system with an Arduino, a light sensor, a button, and two leds
 
+Program6.py - Made Sept 16, Creates a system to turn a servo motor 180 degrees when a button is pressed
+
+
