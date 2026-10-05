@@ -1,0 +1,99 @@
+import time
+from machine import PWM, Pin
+
+# --- Pin Setup (Arduino Nano ESP32) ---
+pin_in1 = Pin("D2", Pin.OUT)
+pin_in2 = Pin("D3", Pin.OUT)
+pin_in3 = Pin("D4", Pin.OUT)
+pin_in4 = Pin("D5", Pin.OUT)
+stepper_pins = [pin_in1, pin_in2, pin_in3, pin_in4]
+
+light_sensor = Pin("D6", Pin.IN)
+servo_pin = Pin("D8", Pin.OUT)
+led = Pin("D9", Pin.OUT)
+
+# --- Configuration Settings ---
+# Standard modules output 0 (LOW) when light is detected, 1 (HIGH) when dark
+LIGHT_DETECTED_STATE = 0
+STEPS_FOR_MOVEMENT = 8700
+
+STEP_SEQUENCE = [
+    [1, 0, 0, 0],
+    [1, 1, 0, 0],
+    [0, 1, 0, 0],
+    [0, 1, 1, 0],
+    [0, 0, 1, 0],
+    [0, 0, 1, 1],
+    [0, 0, 0, 1],
+    [1, 0, 0, 1],
+]
+
+stepper_step_index = 0
+servo_pwm = PWM(servo_pin, freq=50)
+motors_are_open = False
+
+
+def set_servo_angle(angle):
+    min_ns = 500_000  # 0° position
+    max_ns = 2_500_000  # 180° position
+    duty_ns = min_ns + int((angle / 180.0) * (max_ns - min_ns))
+    servo_pwm.duty_ns(duty_ns)
+
+
+def rotate_stepper(steps, forward=True):
+    global stepper_step_index
+    step_dir = 1 if forward else -1
+
+    for _ in range(steps):
+        stepper_step_index = (stepper_step_index + step_dir) % len(
+            STEP_SEQUENCE
+        )
+        for pin_idx in range(4):
+            stepper_pins[pin_idx].value(
+                STEP_SEQUENCE[stepper_step_index][pin_idx]
+            )
+        time.sleep_ms(2)
+
+    # Turn off coils when movement completes to prevent heating
+    for pin in stepper_pins:
+        pin.value(0)
+
+
+def close_motors():
+    global motors_are_open
+    if not motors_are_open:
+        print("[DEBUG] Light detected -> Opening (8700 steps forward)...")
+        rotate_stepper(STEPS_FOR_MOVEMENT, forward=True)
+        set_servo_angle(90)
+        led.value(1)
+        motors_are_open = True
+
+
+def open_motors():
+    global motors_are_open
+    if motors_are_open:
+        print("[DEBUG] Dark detected -> Closing (8700 steps reverse)...")
+        rotate_stepper(STEPS_FOR_MOVEMENT, forward=False)
+        set_servo_angle(0)
+        led.value(0)
+        motors_are_open = False
+
+
+# Initial state (Start closed, LED off)
+set_servo_angle(0)
+led.value(0)
+
+print(
+    "[DEBUG] Light control loop active on pin D6. Monitoring light level..."
+)
+
+# --- Main Program Loop ---
+while True:
+    is_light = light_sensor.value() == LIGHT_DETECTED_STATE
+
+    if is_light:
+        open_motors()
+    else:
+        close_motors()
+
+    time.sleep_ms(100)
