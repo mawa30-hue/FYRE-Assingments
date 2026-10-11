@@ -2,5 +2,7 @@
 This repo is where course assignments for ENGR 095 will be saved.
 
 ## Programming Activities
-September 9: Basic print out and blinking
+These are the assignments we did as part of learning base concepts.
 
+## Project
+This repo contains all the files related to my final project. My group made an automatic retractable roof.
