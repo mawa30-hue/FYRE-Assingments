@@ -9,4 +9,4 @@ FinalProjectProgramIteration3.py - Made Sept 28, Tests light sensor functionalit
 
 FinalProjectProgramIteration4.py - Made Sept 28, Integrated final hardware and wiring, defined logic for Final Project Program
 
-Image.png - Made 0ct 6, Image of project 
+Image.png - Made Oct 6, Image of project 
